@@ -1,0 +1,49 @@
+simpleRenamer v2.0 - Reimplemented in Vala
+
+Written by Karsten-Kai König
+
+Description
+
+This is a simple console-based renamer tool written in Vala. The original
+project was written in Python.
+
+Requirements
+
+The only requirement is Vala (tested with v0.10).
+
+Install
+
+Type in the root directory:
+
+$ make
+$ make install
+
+Now you can start the program with 'simpleRenamer'.
+
+Usage
+
+simpleRenamer [OPTION...] <DIRECTORY>
+
+Help Options:
+  -h, --help            Show help options
+
+Application Options:
+  --pre=PREFIX          set prefix that will be placed to the left of the number
+  --post=POSTFIX        set postfix that will be placed to the left of the number
+  -l, --list=LIST       use a list of files instead of all files in the directory
+  -i, --interactive     choose which files should be renamed interactive
+  -c, --conserve        conserve file extension
+  -s, --start=START     set startnumber
+
+Copyright (C) 2011 Karsten-Kai König <KKoenig@posteo.de>
+
+This program is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public License as published by the Free Software 
+Foundation; either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT 
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with 
+this program; if not, see <http://www.gnu.org/licenses/>.
