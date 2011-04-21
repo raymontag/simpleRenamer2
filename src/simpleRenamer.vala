@@ -17,24 +17,27 @@
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-string pre;
-string post;
-string filename;
-bool interactive;
-bool conserve;
-int start;
-
-const OptionEntry[] entries = {
-    { "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" }, 
-    { "post", 0, 0, OptionArg.STRING, ref post, "set postfix that will be placed to the left of the number", "POSTFIX" }, 
-    { "list", 'l', 0, OptionArg.FILENAME, ref filename, "use a list of files instead of all files in the directory", "LIST" }, 
-    { "interactive", 'i', 0, OptionArg.NONE, ref interactive, "choose which files should be renamed interactive", null }, 
-    { "conserve", 'c', 0, OptionArg.NONE, ref conserve, "conserve file extension", null }, 
-    { "start", 's', 0, OptionArg.INT, ref start, "set startnumber", "START" },
-    { null }
-};
+using GLib;
 
 class App : Object {
+	static string pre;
+	static string post;
+	static string filename;
+	static bool interactive;
+	static bool conserve;
+	static int start;
+
+	static const OptionEntry[] entries = {
+		{ "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" },
+		{ "post", 0, 0, OptionArg.STRING, ref post, "set postfix that will be placed to the left of the number", "POSTFIX" },
+		{ "list", 'l', 0, OptionArg.FILENAME, ref filename, "use a list of files instead of all files in the directory", "LIST" },
+		{ "interactive", 'i', 0, OptionArg.NONE, ref interactive, "choose which files should be renamed interactive", null },
+		{ "conserve", 'c', 0, OptionArg.NONE, ref conserve, "conserve file extension", null },
+		{ "start", 's', 0, OptionArg.INT, ref start, "set startnumber", "START" },
+		{ null }
+	};
+
+
 	protected void parse_commandline_options(string[] args) {
 		var opt_context = new OptionContext("<DIRECTORY>");
 
@@ -47,8 +50,10 @@ class App : Object {
         catch(OptionError error) {
             stdout.printf("\n%s\n\n", error.message);
 			stdout.printf("%s", opt_context.get_help(true, null));
+			Process.exit(1);
         }
 	}
+
     public void run(string[] args) {
 		this.parse_commandline_options(args);
     }
