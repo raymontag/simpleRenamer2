@@ -20,76 +20,76 @@
 using GLib;
 
 class App : Object {
-	/* Fields for parsing commandline options */
-	private static string pre;
-	private static string post;
-	private static string filename;
-	private static bool interactive;
-	private static bool conserve;
-	private static int start;
-	private static const OptionEntry[] entries = {
-		{ "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" },
-		{ "post", 0, 0, OptionArg.STRING, ref post, "set postfix that will be placed to the left of the number", "POSTFIX" },
-		{ "list", 'l', 0, OptionArg.FILENAME, ref filename, "use a list of files instead of all files in the directory", "LIST" },
-		{ "interactive", 'i', 0, OptionArg.NONE, ref interactive, "choose which files should be renamed interactive", null },
-		{ "conserve", 'c', 0, OptionArg.NONE, ref conserve, "conserve file extension", null },
-		{ "start", 's', 0, OptionArg.INT, ref start, "set startnumber", "START" },
-		{ null }
-	};
-	
-	/* Field to access the directory which contains the files to rename */
-	private static Dir dir;
+    /* Fields for parsing commandline options */
+    private static string pre;
+    private static string post;
+    private static string filename;
+    private static bool interactive;
+    private static bool conserve;
+    private static int start;
+    private static const OptionEntry[] entries = {
+        { "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" },
+        { "post", 0, 0, OptionArg.STRING, ref post, "set postfix that will be placed to the left of the number", "POSTFIX" },
+        { "list", 'l', 0, OptionArg.FILENAME, ref filename, "use a list of files instead of all files in the directory", "LIST" },
+        { "interactive", 'i', 0, OptionArg.NONE, ref interactive, "choose which files should be renamed interactive", null },
+        { "conserve", 'c', 0, OptionArg.NONE, ref conserve, "conserve file extension", null },
+        { "start", 's', 0, OptionArg.INT, ref start, "set startnumber", "START" },
+        { null }
+    };
 
-	/* Field which containts the files to rename */
-	private static string[] files;
+    /* Field to access the directory which contains the files to rename */
+    private static Dir dir;
 
-	/* Method to parse the commandline */
-	protected void parse_commandline_options(string[] args) {
-		var opt_context = new OptionContext("<DIRECTORY>");
+    /* Field which containts the files to rename */
+    private static string[] files;
+
+    /* Method to parse the commandline */
+    protected void parse_commandline_options(string[] args) {
+        var opt_context = new OptionContext("<DIRECTORY>");
 
         opt_context.set_help_enabled(true);
         opt_context.add_main_entries(this.entries, null);
 
         try {
             opt_context.parse(ref args);
-			if(args.length >= 2) {
-				dir = Dir.open(args[args.length-1]);
-			}
-			else if(args.length < 2) {
-				throw new FileError.FAULT("Need at least a path to a directory");
-			}
+            if(args.length >= 2) {
+                dir = Dir.open(args[args.length-1]);
+            }
+            else if(args.length < 2) {
+                throw new FileError.FAULT("Need at least a path to a directory");
+            }
         }
         catch(OptionError error) {
             stdout.printf("\n%s\n\n", error.message);
-			stdout.printf("%s", opt_context.get_help(true, null));
-			Process.exit(1);
+            stdout.printf("%s", opt_context.get_help(true, null));
+            Process.exit(1);
         }
-		catch(FileError error) {
-			stdout.printf("\n%s\n\n", error.message);
-			stdout.printf("%s", opt_context.get_help(true, null));
-			Process.exit(1);
-		}
-	}
-
-	/* Method to fill the array files */
-	protected void get_files() {
-		string file = "";
-		do {
-			file = dir.read_name();
-			this.files += file;
-		} while(file != null);
-		
-		/* Cut "null" which was only needed to terminate the loop */
-		files.resize(files.length-1);
-	}
-
-	/* Main loop */
-    public void run(string[] args) {
-		this.parse_commandline_options(args);
-		this.get_files();
+        catch(FileError error) {
+            stdout.printf("\n%s\n\n", error.message);
+            stdout.printf("%s", opt_context.get_help(true, null));
+            Process.exit(1);
+        }
     }
 
-	/* Start the main loop */
+    /* Method to fill the array files */
+    protected void get_files() {
+        string file = "";
+        do {
+            file = dir.read_name();
+            this.files += file;
+        } while(file != null);
+
+        /* Cut "null" which was only needed to terminate the loop */
+        files.resize(files.length-1);
+    }
+
+    /* Main loop */
+    public void run(string[] args) {
+        this.parse_commandline_options(args);
+        this.get_files();
+    }
+
+    /* Start the main loop */
     static int main(string[] args) {
         var app = new App();
         app.run(args);
@@ -97,5 +97,4 @@ class App : Object {
         return 0;
     }
 }
-
 
