@@ -90,6 +90,7 @@ class App : Object {
         this.files.sort((CompareFunc) strcmp);
     }
 
+    /* Method to rename the files */
     protected void rename_files() {
         int counter = 0;
         foreach(string s in files) {
@@ -99,7 +100,12 @@ class App : Object {
         }
     }
 
-    /* Main loop */
+    /** Main loop
+      * 1. Parse commandline
+      * 2. Get the paths of the files in the aiming directory
+      * 3. Move into this directory
+      * 4. Rename the files
+      */
     public void run(string[] args) {
         this.parse_commandline_options(args);
         this.get_files();
