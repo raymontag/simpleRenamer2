@@ -5,19 +5,22 @@
  *
  * Copyright (C) 2010-2011 Karsten-Kai König <KKoenig@posteo.de>
  * 
- * This program is free software; you can redistribute it and/or modify it under 
- * the terms of the GNU General Public License as published by the Free Software 
- * Foundation; either version 3 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 3 of the License, or (at your option) 
+ * any later version.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for 
+ * more details.
  *
  * You should have received a copy of the GNU General Public License along with 
  * this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
 using GLib;
+using Gee;
 
 class App : Object {
     /* Fields for parsing commandline options */
@@ -41,7 +44,8 @@ class App : Object {
     private static Dir dir;
 
     /* Field which containts the files to rename */
-    private static string[] files;
+    private static ArrayList<string> files;
+
 
     /* Method to parse the commandline */
     protected void parse_commandline_options(string[] args) {
@@ -60,13 +64,13 @@ class App : Object {
             }
         }
         catch(OptionError error) {
-            stdout.printf("\n%s\n\n", error.message);
-            stdout.printf("%s", opt_context.get_help(true, null));
+            stderr.printf("\n%s\n\n", error.message);
+            stderr.printf("%s", opt_context.get_help(true, null));
             Process.exit(1);
         }
         catch(FileError error) {
-            stdout.printf("\n%s\n\n", error.message);
-            stdout.printf("%s", opt_context.get_help(true, null));
+            stderr.printf("\n%s\n\n", error.message);
+            stderr.printf("%s", opt_context.get_help(true, null));
             Process.exit(1);
         }
     }
@@ -74,20 +78,35 @@ class App : Object {
     /* Method to fill the array files */
     protected void get_files() {
         string file = "";
+        this.files = new ArrayList<string>();
+
         do {
             file = dir.read_name();
-            this.files += file;
+            this.files.add(file);
         } while(file != null);
 
         /* Cut "null" which was only needed to terminate the loop */
-        files.resize(files.length-1);
+        this.files.remove_at(this.files.size-1);
+        this.files.sort((CompareFunc) strcmp);
+    }
+
+    protected void rename_files() {
+        int counter = 0;
+        foreach(string s in files) {
+            counter++;
+            stdout.printf("Rename %s to %s\n", s, counter.to_string());
+            FileUtils.rename(s, counter.to_string());
+        }
     }
 
     /* Main loop */
     public void run(string[] args) {
         this.parse_commandline_options(args);
         this.get_files();
+        Environment.set_current_dir(args[args.length-1]);
+        rename_files();
     }
+
 
     /* Start the main loop */
     static int main(string[] args) {
