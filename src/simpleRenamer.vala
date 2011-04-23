@@ -24,8 +24,8 @@ using Gee;
 
 class App : Object {
     /* Fields for parsing commandline options */
-    private static string pre;
-    private static string post;
+    private static string pre = "";
+    private static string post = "";
     private static string filename;
     private static bool interactive;
     private static bool conserve;
@@ -95,8 +95,8 @@ class App : Object {
         int counter = 0;
         foreach(string s in files) {
             counter++;
-            stdout.printf("Rename %s to %s\n", s, counter.to_string());
-            FileUtils.rename(s, counter.to_string());
+            stdout.printf("Rename %s to %s%s%s\n", s, pre, counter.to_string(), post);
+            FileUtils.rename(s, pre+counter.to_string()+post);
         }
     }
 
