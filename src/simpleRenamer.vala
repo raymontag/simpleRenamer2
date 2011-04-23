@@ -92,11 +92,24 @@ class App : Object {
 
     /* Method to rename the files */
     protected void rename_files() {
-        int counter = 0;
+        int counter = 1;
+        string answer;
+
         foreach(string s in files) {
-            counter++;
-            stdout.printf("Rename %s to %s%s%s\n", s, pre, counter.to_string(), post);
-            FileUtils.rename(s, pre+counter.to_string()+post);
+            if(interactive) {
+                stdout.printf("Rename %s to %s%s%s? [Y/n]", s, this.pre, counter.to_string(), this.post);
+                answer = stdin.read_line();
+                if(answer != "n") {
+                    stdout.printf("Rename %s to %s%s%s\n", s, this.pre, counter.to_string(), this.post);
+                    FileUtils.rename(s, pre+counter.to_string()+post);
+                    counter++;
+                }
+            }
+            else {
+                stdout.printf("Rename %s to %s%s%s\n", s, this.pre, counter.to_string(), this.post);
+                FileUtils.rename(s, pre+counter.to_string()+post);
+                counter++;
+            }
         }
     }
 
