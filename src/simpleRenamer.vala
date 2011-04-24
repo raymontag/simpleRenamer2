@@ -29,7 +29,7 @@ class App : Object {
     private static string filename;
     private static bool interactive;
     private static bool conserve;
-    private static int start;
+    private static int start = 1;
     private static const OptionEntry[] entries = {
         { "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" },
         { "post", 0, 0, OptionArg.STRING, ref post, "set postfix that will be placed to the left of the number", "POSTFIX" },
@@ -92,7 +92,7 @@ class App : Object {
 
     /* Method to rename the files */
     protected void rename_files() {
-        int counter = 1;
+        int counter = this.start;
         string answer;
 
         foreach(string s in files) {
