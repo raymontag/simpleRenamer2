@@ -26,9 +26,9 @@ class App : Object {
     /* Fields for parsing commandline options */
     private static string pre = "";
     private static string post = "";
-    private static string filename;
-    private static bool interactive;
-    private static bool conserve;
+    private static string filename = "";
+    private static bool interactive = false;
+    private static bool conserve = false;
     private static int start = 1;
     private static const OptionEntry[] entries = {
         { "pre", 0, 0, OptionArg.STRING, ref pre, "set prefix that will be placed to the left of the number", "PREFIX" },
@@ -75,14 +75,53 @@ class App : Object {
         }
     }
 
+    /* Method to read a file line by line */
+    protected string[] read_file() {
+        string line;
+        string[] lines = {};
+        var file = File.new_for_path(this.filename);
+
+        if(!file.query_exists()) {
+            stderr.printf("\nFile %s doesn't exist\n\n", file.get_path());
+            Process.exit(1);
+        }
+
+        try {
+            var stream = new DataInputStream(file.read());
+
+            while((line = stream.read_line(null)) != null) {
+                lines += line;
+            }
+        }
+        catch(Error error) {
+            stderr.printf("\n%s\n\n", error.message);
+            Process.exit(1);
+        }
+
+        return lines;
+    }
+
     /* Method to fill the array files */
     protected void get_files() {
         string file = "";
+        string[] list = {};
         this.files = new ArrayList<string>();
 
+        /* If the list option is used */
+        if(this.filename != "") {
+            list = read_file();
+        }
+
         do {
-            file = dir.read_name();
-            this.files.add(file);
+            file = this.dir.read_name();
+
+            /* Only add the file if it's in the list if the list option is used */
+            if((this.filename != "" && file in list) || file == null) {
+                this.files.add(file);
+            }
+            else if(this.filename == "") {
+                this.files.add(file);
+            }
         } while(file != null);
 
         /* Cut "null" which was only needed to terminate the loop */
@@ -114,11 +153,11 @@ class App : Object {
     }
 
     /** Main loop
-      * 1. Parse commandline
-      * 2. Get the paths of the files in the aiming directory
-      * 3. Move into this directory
-      * 4. Rename the files
-      */
+     * 1. Parse commandline
+     * 2. Get the paths of the files in the aiming directory
+     * 3. Move into this directory
+     * 4. Rename the files
+     */
     public void run(string[] args) {
         this.parse_commandline_options(args);
         this.get_files();

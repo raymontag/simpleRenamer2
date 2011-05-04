@@ -9,7 +9,7 @@ project was written in Python.
 
 Requirements
 
-The only requirement is Vala (tested with v0.10).
+The requirements are Vala (tested with v0.10) and Gee.
 
 Install
 

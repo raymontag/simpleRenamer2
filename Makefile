@@ -1,10 +1,10 @@
 EXEC=simpleRenamer
 SOURCES=src/simpleRenamer.vala
-PKG=gee-1.0
+PKG=--pkg gee-1.0 --pkg gio-2.0
 PREFIX=/usr
 
 all:
-	valac $(SOURCES) --pkg $(PKG) -o $(EXEC)
+	valac $(SOURCES) $(PKG) -o $(EXEC)
 
 install:
 	install -m 0775 simpleRenamer $(PREFIX)/bin
