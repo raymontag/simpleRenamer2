@@ -44,7 +44,7 @@ class App : Object {
     private static Dir dir;
 
     /* Field which containts the files to rename */
-    private static ArrayList<string> files;
+    private static Gee.ArrayList<string> files;
 
 
     /* Method to parse the commandline */
@@ -57,7 +57,7 @@ class App : Object {
         try {
             opt_context.parse(ref args);
             if(args.length >= 2) {
-                dir = Dir.open(args[args.length-1]);
+                this.dir = Dir.open(args[args.length-1]);
             }
             else if(args.length < 2) {
                 throw new FileError.FAULT("Need at least a path to a directory");
@@ -101,7 +101,7 @@ class App : Object {
         return lines;
     }
 
-    /* Method to fill the array files */
+    /* Method to fill the array 'files' */
     protected void get_files() {
         string file = "";
         string[] list = {};
@@ -133,20 +133,27 @@ class App : Object {
     protected void rename_files() {
         int counter = this.start;
         string answer;
-
+        string extension = "";
+                
         foreach(string s in files) {
-            if(interactive) {
-                stdout.printf("Rename %s to %s%s%s? [Y/n]", s, this.pre, counter.to_string(), this.post);
+			/* If the conserve option is used, cut the file extension */
+			if(this.conserve) {
+				extension = Regex.split_simple("([.].*)$", s)[1];
+			}
+			
+			/* If the interactive option is used, ask for every file */
+            if(this.interactive) {
+                stdout.printf("Rename %s to %s%s%s%s? [Y/n]", s, this.pre, counter.to_string(), this.post, extension);
                 answer = stdin.read_line();
                 if(answer != "n") {
-                    stdout.printf("Rename %s to %s%s%s\n", s, this.pre, counter.to_string(), this.post);
-                    FileUtils.rename(s, pre+counter.to_string()+post);
+                    stdout.printf("Rename %s to %s%s%s%s\n", s, this.pre, counter.to_string(), this.post, extension);
+                    FileUtils.rename(s, this.pre+counter.to_string()+this.post+extension);
                     counter++;
                 }
             }
             else {
-                stdout.printf("Rename %s to %s%s%s\n", s, this.pre, counter.to_string(), this.post);
-                FileUtils.rename(s, pre+counter.to_string()+post);
+                stdout.printf("Rename %s to %s%s%s%s\n", s, this.pre, counter.to_string(), this.post, extension);
+                FileUtils.rename(s, this.pre+counter.to_string()+this.post+extension);
                 counter++;
             }
         }
@@ -162,7 +169,7 @@ class App : Object {
         this.parse_commandline_options(args);
         this.get_files();
         Environment.set_current_dir(args[args.length-1]);
-        rename_files();
+        this.rename_files();
     }
 
 
@@ -174,4 +181,3 @@ class App : Object {
         return 0;
     }
 }
-

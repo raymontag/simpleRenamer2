@@ -9,6 +9,8 @@ all:
 install:
 	install -m 0775 simpleRenamer $(PREFIX)/bin
 
+uninstall:
+	rm $(PREFIX)/bin/simpleRenamer
+	
 clean:
 	rm simpleRenamer
-
